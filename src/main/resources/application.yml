@@ -1,0 +1,18 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+#jpa page 1부터 파라미터 시작 하겠다는 설정
+# 테스트 환경에서 안되는 이유: 웹 요청이 아니기 떄문에 . 웹 요청이 들어와야 적용됨.
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+        default-page-size: 5
+  datasource:
+    url: jdbc:h2:mem:zzamuni
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
