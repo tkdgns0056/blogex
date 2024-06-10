@@ -3,6 +3,7 @@ package com.blogex.api.controller;
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostSearch;
 import com.blogex.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,6 @@ public class PostController {
 ////        return Map.of("postId", postId);
         postService.write(request);
     }
-
     /**
      * 조회 API
      * /posts -> 글 전체 조회(검색 + 페이징)
@@ -51,11 +51,8 @@ public class PostController {
         // Response 클래스를 명확하게 나눔. ( 서비스 정책에 맞는 로직이 들어갈 수 있게 response객체 만듦)
         return postService.get(id);
     }
-
     @GetMapping("/posts")
-    public List<PostResponse> getList(Pageable pageable){
-        return postService.getList(pageable);
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch){
+        return postService.getList(postSearch);
     }
-
-
 }

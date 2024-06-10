@@ -4,6 +4,7 @@ import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostSearch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,11 +64,11 @@ public class PostService {
          */
     }
 
-    public List<PostResponse> getList(Pageable pageable) {
+    public List<PostResponse> getList(PostSearch postSearch) {
         //pageable
 //        Pageable pageable = PageRequest.of(page,5, Sort.by(Sort.Direction.DESC,"id"));
 
-        return postRepository.findAll(pageable).stream()
+        return postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }
