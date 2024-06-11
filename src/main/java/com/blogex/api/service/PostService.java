@@ -2,14 +2,14 @@ package com.blogex.api.service;
 
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
+import com.blogex.api.domain.PostEditor;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,5 +71,29 @@ public class PostService {
         return postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PostResponse edit(Long id, PostEdit postEdit){
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+//        postRepository.save(post);// 필요없음 메서드위에 트랜잭션 설정하면 알아서 함.
+
+        return new PostResponse(post);
+    }
+
+    public void delete(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니댜."));
+
+        postRepository.delete(post);
     }
 }

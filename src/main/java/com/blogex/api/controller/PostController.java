@@ -3,6 +3,7 @@ package com.blogex.api.controller;
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
 import com.blogex.api.service.PostService;
 import jakarta.validation.Valid;
@@ -54,5 +55,15 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch){
         return postService.getList(postSearch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable(name= "postId") Long postId, @RequestBody @Valid PostEdit request){
+             postService.edit(postId, request);
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public void delete(@PathVariable Long postId){
+        postService.delete(postId);
     }
 }

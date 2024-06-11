@@ -4,6 +4,7 @@ import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostEdit;
 import com.blogex.api.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -23,6 +24,7 @@ import java.util.stream.IntStream;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -69,7 +71,7 @@ class PostControllerTest {
 
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""))
@@ -89,7 +91,7 @@ class PostControllerTest {
 
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(json)
                 )
                 .andExpect(status().isBadRequest())
@@ -113,7 +115,7 @@ class PostControllerTest {
 
         // when (이런 요청을 했을때)
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(json)
                 )
                 .andExpect(status().isOk())
@@ -151,7 +153,7 @@ class PostControllerTest {
 
         // expected (when + then)
         mockMvc.perform(get("/posts/{postId}", response.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(response.getId()))
                 .andExpect(jsonPath("$.title").value("1234567890"))
@@ -175,7 +177,7 @@ class PostControllerTest {
 
         // expected (when + then)
         mockMvc.perform(get("/posts?page=1&size=10")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Matchers.is(10)))
                 .andExpect(jsonPath("[0].title").value("foo19"))
@@ -200,11 +202,56 @@ class PostControllerTest {
 
         // expected (when + then)
         mockMvc.perform(get("/posts?page=0&size=10")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Matchers.is(10)))
                 .andExpect(jsonPath("[0].title").value("foo19"))
                 .andExpect(jsonPath("[0].content").value("bar19"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test7() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("포레스티아")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("짬니")
+                .content("포레스티아")
+                .build();
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // expected (when + then)
+        mockMvc.perform(patch("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit))
+                )
+
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void test8() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("포레스티아")
+                .build();
+        postRepository.save(post);
+
+        // expected
+        mockMvc.perform(delete("/posts/{postId}", post.getId())
+                    .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

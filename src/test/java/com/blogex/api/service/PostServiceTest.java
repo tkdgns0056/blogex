@@ -4,6 +4,7 @@ import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
+import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,5 +109,50 @@ class PostServiceTest {
 //        Assertions.assertEquals(2L, posts.size());
         Assertions.assertEquals(10L, posts.size());
         Assertions.assertEquals("foo19", posts.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("글 제목을 수정")
+    void test4(){
+        // given
+     Post post = Post.builder()
+             .title("짜무니")
+             .content("포레스티아")
+             .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("짜무니")
+                .content("초가집")
+                .build();
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다 id=" + post.getId()));
+        Assertions.assertEquals("초가집", changedPost.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void test5(){
+
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("포레스티아")
+                .build();
+
+        postRepository.save(post);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        // 삭제했을때 게시글이 0이냐?
+        Assertions.assertEquals(0, postRepository.count());
+
     }
 }
