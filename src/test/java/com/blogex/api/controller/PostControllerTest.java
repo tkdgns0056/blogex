@@ -254,4 +254,54 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    void test9() throws Exception{
+        // 존재하지 않는 아이디로 조회
+        mockMvc.perform(delete("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 수정")
+    void test10() throws Exception{
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                .title("짜무니")
+                .content("반포자이")
+                .build();
+
+        // 존재하지 않는 아이디로 조회
+        mockMvc.perform(patch("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        // writeValueAsString(value) : values:String 타입으로 변환할 대상
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성시 제목에 '바보' 는 포함 될 수 없다.")
+    void test11() throws Exception {
+
+        //given
+        PostCreate request = PostCreate.builder()
+                .title("나는 바보입니다.")
+                .content("반포자이")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // when (이런 요청을 했을때)
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isOk())
+                .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
+
+    }
 }

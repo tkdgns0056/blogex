@@ -2,6 +2,7 @@ package com.blogex.api.controller;
 
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
+import com.blogex.api.exception.InvalidRequest;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
@@ -28,6 +29,12 @@ public class PostController {
 
     @PostMapping("/posts")
     public void posts(@RequestBody @Valid PostCreate request){
+        // 검증 어노테이션으로 검증이 힘들 경우 이렇게 사용도 한다.
+        if(request.getTitle().contains("바보")){
+            throw new InvalidRequest();
+        }
+
+
         // Case1. 저장한 데이터 Entity -> response로 응답하기
 //        return postService.write(request);
         // Case2. 저장한 데이터에 primary_id -> response로 응답하기

@@ -2,6 +2,7 @@ package com.blogex.api.service;
 
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
+import com.blogex.api.exception.PostNotFound;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
@@ -58,7 +59,7 @@ class PostServiceTest {
         postService.write(postCreate);
 
         // then (데이터 검증)
-        Assertions.assertEquals(2L, postRepository.count());
+        assertEquals(2L, postRepository.count());
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
@@ -78,10 +79,10 @@ class PostServiceTest {
         PostResponse post = postService.get(requestPost.getId());
 
         // then
-        Assertions.assertNotNull(post);
-        Assertions.assertEquals(1L, postRepository.count());
-        Assertions.assertEquals("foo", post.getTitle());
-        Assertions.assertEquals("bar", post.getContent());
+        assertNotNull(post);
+        assertEquals(1L, postRepository.count());
+        assertEquals("foo", post.getTitle());
+        assertEquals("bar", post.getContent());
     }
 
 
@@ -107,8 +108,8 @@ class PostServiceTest {
 
         // then
 //        Assertions.assertEquals(2L, posts.size());
-        Assertions.assertEquals(10L, posts.size());
-        Assertions.assertEquals("foo19", posts.get(0).getTitle());
+        assertEquals(10L, posts.size());
+        assertEquals("foo19", posts.get(0).getTitle());
     }
 
     @Test
@@ -132,7 +133,7 @@ class PostServiceTest {
         // then
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다 id=" + post.getId()));
-        Assertions.assertEquals("초가집", changedPost.getContent());
+        assertEquals("초가집", changedPost.getContent());
     }
 
     @Test
@@ -152,7 +153,72 @@ class PostServiceTest {
 
         // then
         // 삭제했을때 게시글이 0이냐?
-        Assertions.assertEquals(0, postRepository.count());
+        assertEquals(0, postRepository.count());
 
+    }
+
+    @Test
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    void test7(){
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("반포자이")
+                .build();
+        postRepository.save(post);
+
+        // expected
+//        IllegalArgumentException e e= assertThrows(IllegalArgumentException.class, () -> {
+//            postService.get(post.getId() + 1L);
+//        });e
+//        //, "예외 처리가 잘못 되었어요."); // 만약에 예외처리가 실패한 경우 이 메시지를 출력
+//
+//        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
+
+        // 위에 예외처리 코드를 클래스와 시켜서 공통으로 사용 할 수 있게 변경
+        Assertions.assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 - 존재 하지 않는 글")
+    void test8(){
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("포레스티아")
+                .build();
+
+        postRepository.save(post);
+
+        // expected
+        Assertions.assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
+
+    }
+
+
+    @Test
+    @DisplayName("글 제목을 수정 - 존재하지 않는 글")
+    void test9(){
+        // given
+        Post post = Post.builder()
+                .title("짜무니")
+                .content("포레스티아")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("짜무니")
+                .content("초가집")
+                .build();
+
+        // expected
+        Assertions.assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1, postEdit);
+        });
     }
 }
