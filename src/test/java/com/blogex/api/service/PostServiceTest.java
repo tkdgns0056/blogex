@@ -52,14 +52,11 @@ class PostServiceTest {
                 .content("내용입니다.")
                 .build();
 
-
-        postService.write(postCreate);
-
         // when
         postService.write(postCreate);
 
         // then (데이터 검증)
-        assertEquals(2L, postRepository.count());
+        assertEquals(1L, postRepository.count());
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());

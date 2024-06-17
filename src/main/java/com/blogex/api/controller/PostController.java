@@ -1,5 +1,6 @@
 package com.blogex.api.controller;
 
+import com.blogex.api.config.data.UserSession;
 import com.blogex.api.controller.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.exception.InvalidRequest;
@@ -7,6 +8,7 @@ import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
 import com.blogex.api.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +29,29 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/posts")
-    public void posts(@RequestBody @Valid PostCreate request){
-        // 검증 어노테이션으로 검증이 힘들 경우 이렇게 사용도 한다.
-        if(request.getTitle().contains("바보")){
-            throw new InvalidRequest();
-        }
+    @GetMapping("/test")
+    public String test(){
+        return "hello";
+    }
 
+    @GetMapping("/foo")
+    public String foo(UserSession userSession){
+        log.info(">>>{}", userSession.name);
+        return "foo";
+    }
+
+    @PostMapping("/posts")
+    public void post(@RequestBody @Valid PostCreate request, @RequestHeader String authorization){
+        // 검증 어노테이션으로 검증이 힘들 경우 이렇게 사용도 한다.
+//        if(request.getTitle().contains("바보")){
+//            throw new InvalidRequest();
+//        }
+
+        // 간단한 사용자 인증 방식
+        if(authorization.equals("zzamuni")){
+            request.validate();
+            postService.write(request);
+        }
 
         // Case1. 저장한 데이터 Entity -> response로 응답하기
 //        return postService.write(request);
@@ -65,12 +83,17 @@ public class PostController {
     }
 
     @PatchMapping("/posts/{postId}")
-    public void edit(@PathVariable(name= "postId") Long postId, @RequestBody @Valid PostEdit request){
-             postService.edit(postId, request);
+    public void edit(@PathVariable(name= "postId") Long postId, @RequestBody @Valid PostEdit request, @RequestHeader String authorization){
+        if(authorization.equals("zzamuni")){
+            postService.edit(postId, request);
+        }
+
     }
 
     @DeleteMapping("/posts/{postId}")
-    public void delete(@PathVariable Long postId){
-        postService.delete(postId);
+    public void delete(@PathVariable Long postId, @RequestHeader String authorization){
+        if(authorization.equals("zzamuni")){
+            postService.delete(postId);
+        }
     }
 }

@@ -75,7 +75,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse edit(Long id, PostEdit postEdit){
+    public void edit(Long id, PostEdit postEdit){
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
 
@@ -87,8 +87,6 @@ public class PostService {
 
         post.edit(postEditor);
 //        postRepository.save(post);// 필요없음 메서드위에 트랜잭션 설정하면 알아서 함.
-
-        return new PostResponse(post);
     }
 
     public void delete(Long id) {

@@ -1,17 +1,26 @@
 package com.blogex.api.exception;
 
+import lombok.Getter;
+
 /**
- * 정책상 InvalidRequest 400으로
+ * status -> 400
  */
-public class InvalidRequest extends BlogException{
+@Getter
+public class InvalidRequest extends BlogException {
 
     private static final String MESSAGE = "잘못된 요청입니다.";
 
-    public InvalidRequest(){
+    public InvalidRequest() {
         super(MESSAGE);
     }
 
-    public abstract int statusCode(){
+    public InvalidRequest(String fieldName, String message) {
+        super(MESSAGE);
+        addValidation(fieldName, message);
+    }
 
+    @Override
+    public int getStatusCode() {
+        return 400;
     }
 }

@@ -2,10 +2,9 @@ package com.blogex.api.controller;
 
 import com.blogex.api.controller.response.ErrorResponse;
 import com.blogex.api.exception.BlogException;
-import com.blogex.api.exception.InvalidRequest;
-import com.blogex.api.exception.PostNotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,46 +16,39 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
+    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(Exception.class)
-    @ResponseBody // 핸들러에서 ResponseBody 달아주면 json 형태로넘겨줌
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {
-
-            ErrorResponse response = ErrorResponse.builder()
-                    .code("400")
-                    .message("잘못된 요청입니다.")
-                    .build();
-
-            for(FieldError fieldError : e.getFieldErrors()){
-                response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return response;
-    }
-
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(PostNotFound.class)
-    public ErrorResponse postNotFound(PostNotFound e){
         ErrorResponse response = ErrorResponse.builder()
-                .code("404")
-                .message("존재하지 않는 글입니다.")
+                .code("400")
+                .message("잘못된 요청입니다.")
                 .build();
+
+        for (FieldError fieldError : e.getFieldErrors()) {
+            response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
+        }
 
         return response;
     }
 
-    // 예외 처리가 늘어날 떄마다 예외 메소드를 만들어서 처리할것인가? 너무 힘듦
     @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BlogException.class)
-    public ErrorResponse blogException(BlogException e){
-        ErrorResponse response = ErrorResponse.builder()
-                .code("404")
-                .message("존재하지 않는 글입니다.")
+    public ResponseEntity<ErrorResponse> blogException(BlogException e) {
+
+        int statusCode = e.getStatusCode();
+
+        ErrorResponse body = ErrorResponse.builder()
+                .code(String.valueOf(statusCode))
+                .message(e.getMessage())
+                .validation(e.getValidation()) // BlogException 메소드
                 .build();
+
+        // 응답 json validation -> title : "제목에 바보 포함 불가"
+        ResponseEntity<ErrorResponse> response = ResponseEntity.status(statusCode)
+                .body(body);
 
         return response;
     }
+
 }

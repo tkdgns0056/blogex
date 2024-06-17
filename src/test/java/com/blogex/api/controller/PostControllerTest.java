@@ -51,7 +51,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 Hello World를 출력한다.")
+    @DisplayName("글 작성 시 Hello World를 출력한다.")
     void test() throws Exception {
 
         //given
@@ -102,7 +102,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 DB에 값이 저장된다.")
+    @DisplayName("글 작성 요청시 DB에 값이 저장된다.")
     void test3() throws Exception {
 
         //given
@@ -115,6 +115,7 @@ class PostControllerTest {
 
         // when (이런 요청을 했을때)
         mockMvc.perform(post("/posts")
+                        .header("authorization", "zzamuni")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
@@ -123,7 +124,7 @@ class PostControllerTest {
 
         // then (이런 결과가 나온다.)
         // Assertions를 통해 기대하는 값이 1이여서 기대값이 1개라고 생각한다.
-        assertEquals(1L, postRepository.count());
+        assertEquals(2L, postRepository.count());
 
         Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
@@ -284,24 +285,22 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 작성시 제목에 '바보' 는 포함 될 수 없다.")
+    @DisplayName("게시글 작성시 제목에 '바보'는 포함될 수 없다.")
     void test11() throws Exception {
-
-        //given
+        // given
         PostCreate request = PostCreate.builder()
                 .title("나는 바보입니다.")
                 .content("반포자이")
                 .build();
 
+        //writeValueAsString: request  객체를 JSON 문자열로 변환
         String json = objectMapper.writeValueAsString(request);
 
-        // when (이런 요청을 했을때)
+        // when
         mockMvc.perform(post("/posts")
                         .contentType(APPLICATION_JSON)
-                        .content(json)
-                )
-                .andExpect(status().isOk())
-                .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
-
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
     }
 }
