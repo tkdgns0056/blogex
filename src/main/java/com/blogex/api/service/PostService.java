@@ -1,6 +1,6 @@
 package com.blogex.api.service;
 
-import com.blogex.api.controller.response.PostResponse;
+import com.blogex.api.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.domain.PostEditor;
 import com.blogex.api.exception.PostNotFound;

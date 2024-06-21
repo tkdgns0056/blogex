@@ -1,6 +1,6 @@
 package com.blogex.api.controller;
 
-import com.blogex.api.controller.response.ErrorResponse;
+import com.blogex.api.response.ErrorResponse;
 import com.blogex.api.exception.BlogException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

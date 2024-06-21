@@ -1,4 +1,4 @@
-package com.blogex.api.controller.response;
+package com.blogex.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -18,6 +18,7 @@ import java.util.Map;
  * - null, absent, Colletions, Map의 isEmpty()가 true, Array의 length 0, String length 0인 데이터 제외
  */
 @Getter
+//@JsonInclude(value = JsonInclude.Include.NON_EMPTY) // 비어있는 값도 넘길 필요가 있기떄문에 선호x
 public class ErrorResponse {
 
     private final String code;

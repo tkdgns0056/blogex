@@ -1,19 +1,14 @@
 package com.blogex.api.controller;
 
 import com.blogex.api.config.data.UserSession;
-import com.blogex.api.controller.response.PostResponse;
-import com.blogex.api.domain.Post;
-import com.blogex.api.exception.InvalidRequest;
+import com.blogex.api.response.PostResponse;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
 import com.blogex.api.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,10 +29,16 @@ public class PostController {
         return "hello";
     }
 
+
     @GetMapping("/foo")
-    public String foo(UserSession userSession){
-        log.info(">>>{}", userSession.name);
-        return "foo";
+    public Long foo(UserSession userSession){
+        log.info(">>>{}", userSession.id);
+        return userSession.id;
+    }
+
+    @GetMapping("/bar")
+    public String bar(UserSession userSession){
+        return "인증이 필요없는 페이지";
     }
 
     @PostMapping("/posts")

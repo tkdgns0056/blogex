@@ -1,6 +1,6 @@
 package com.blogex.api.service;
 
-import com.blogex.api.controller.response.PostResponse;
+import com.blogex.api.response.PostResponse;
 import com.blogex.api.domain.Post;
 import com.blogex.api.exception.PostNotFound;
 import com.blogex.api.repositrory.PostRepository;
@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;

@@ -1,5 +1,7 @@
 package com.blogex.api.config;
 
+import com.blogex.api.config.data.UserSession;
+import com.blogex.api.exception.Unauthorized;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -16,12 +18,20 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     // 사용자가 정말 원하는 dto인지 물어보는 용도
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return false;
+        return parameter.getParameterType().equals(UserSession.class); //
     }
 
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return null;
+        String accessToken = webRequest.getHeader("Authorization"); // getPamaeter로 가져오면 충돌이 발생할 수 있으므로 header에 담아서 넣는다.
+        if(accessToken == null || accessToken.equals("")){
+            throw new Unauthorized();
+        }
+
+        // 데이터베이스 사용자 확인작업
+        // ...
+
+        return new UserSession(1L);
     }
 }

@@ -1,4 +1,4 @@
-package com.blogex.api.controller.response;
+package com.blogex.api.response;
 
 import com.blogex.api.domain.Post;
 import lombok.Builder;
