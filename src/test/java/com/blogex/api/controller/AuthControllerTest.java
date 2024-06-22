@@ -1,11 +1,10 @@
 package com.blogex.api.controller;
 
+import com.blogex.api.domain.Session;
 import com.blogex.api.domain.Users;
 import com.blogex.api.repositrory.PostRepository;
-import com.blogex.api.repositrory.SessionRepository;
 import com.blogex.api.repositrory.UserRepository;
 import com.blogex.api.request.Login;
-import com.blogex.api.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -17,9 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,9 +38,7 @@ class AuthControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-    
-    @Autowired
-    private SessionRepository sessionRepository;
+
 
 
     @BeforeEach
@@ -149,7 +145,46 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", Matchers.notNullValue())) // accessToken은 계속 값이 바뀌기 때문에 notNullValue 로 테스트
                 .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
+    }
+
+    @Test
+    @DisplayName("로그인 후 권한이 필요한 페이지 접속한다. /foo")
+    void test4() throws Exception {
+        //given
+        Users users = Users.builder()
+                .name("짜무니")
+                .email("tkdgns0056@gmail.com")
+                .password("1234")
+                .build();
+        Session session  = users.addSession();
+        userRepository.save(users);
+
+        // expected
+        mockMvc.perform(get("/foo")
+                        .header("Authorization", session.getAccessToken())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
+    }
 
 
+    @Test
+    @DisplayName("로그인 후 검증되지 않은 세션값으로 권한이 필요한 페이지에 접속 할 수 없다.")
+    void test5() throws Exception {
+        //given
+        Users users = Users.builder()
+                .name("짜무니")
+                .email("tkdgns0056@gmail.com")
+                .password("1234")
+                .build();
+        Session session  = users.addSession();
+        userRepository.save(users);
+
+        // expected
+        mockMvc.perform(get("/foo")
+                        .header("Authorization", session.getAccessToken() + "-")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
     }
 }

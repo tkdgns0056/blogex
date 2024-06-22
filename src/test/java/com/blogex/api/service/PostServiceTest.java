@@ -7,6 +7,7 @@ import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
+import com.blogex.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

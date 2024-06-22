@@ -17,4 +17,3 @@ public class Unauthorized extends BlogException {
         return 401;
     }
 }
-
