@@ -8,6 +8,7 @@ import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
 import com.blogex.api.request.PostSearch;
+import com.blogex.api.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

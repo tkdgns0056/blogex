@@ -5,6 +5,7 @@ import com.blogex.api.domain.Post;
 import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.request.PostCreate;
 import com.blogex.api.request.PostEdit;
+import com.blogex.api.response.PostResponse;
 import com.blogex.api.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -15,12 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -77,7 +75,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 title값은 필수다.")
+    @DisplayName("/글 작성 요청시 title값은 필수다.")
     void test2() throws Exception {
 
         //given
@@ -112,8 +110,8 @@ class PostControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         // when (이런 요청을 했을때)
-        mockMvc.perform(post("/posts")
-                        .header("authorization", "zzamuni")
+        mockMvc.perform(post("/posts?authorization=zzz")
+                        .header("authorization", "mmagi")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
