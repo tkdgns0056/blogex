@@ -5,7 +5,6 @@ import com.blogex.api.repositrory.PostRepository;
 import com.blogex.api.repositrory.SessionRepository;
 import com.blogex.api.repositrory.UserRepository;
 import com.blogex.api.request.Login;
-import com.blogex.api.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -17,8 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,7 +37,7 @@ class AuthControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private SessionRepository sessionRepository;
 
