@@ -3,8 +3,10 @@ package com.blogex.api.controller;
 import com.blogex.api.domain.Session;
 import com.blogex.api.domain.Users;
 import com.blogex.api.repositrory.PostRepository;
+import com.blogex.api.repositrory.SessionRepository;
 import com.blogex.api.repositrory.UserRepository;
 import com.blogex.api.request.Login;
+import com.blogex.api.request.Signup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -187,6 +189,24 @@ class AuthControllerTest {
                         .header("Authorization", session.getAccessToken() + "-")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
+                .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
+    }
+
+    @Test
+    @DisplayName("회원가입")
+    void test6() throws Exception {
+        //given
+        Signup signup = Signup.builder()
+                .email("tkdgns0056@gmail.com")
+                .password("1234")
+                .name("짜무니")
+                .build();
+
+        // expected
+        mockMvc.perform(post("/auth/signup")
+                        .content(objectMapper.writeValueAsString(signup))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print()); // http 요청에 대한 써머리를 남겨줌 (header, contentType 등등 표시)
     }
 }

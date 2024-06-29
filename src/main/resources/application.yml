@@ -7,10 +7,6 @@ spring:
   #data.sal 파일 읽어주는 용도
   jpa:
     defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
-
   #jpa page 1부터 파라미터 시작 하겠다는 설정
  # 테스트 환경에서 안되는 이유: 웹 요청이 아니기 떄문에 . 웹 요청이 들어와야 적용됨.
   data:

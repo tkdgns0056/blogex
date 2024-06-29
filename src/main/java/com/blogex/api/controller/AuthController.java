@@ -2,6 +2,7 @@ package com.blogex.api.controller;
 
 import com.blogex.api.config.AppConfig;
 import com.blogex.api.request.Login;
+import com.blogex.api.request.Signup;
 import com.blogex.api.response.SessionResponse;
 import com.blogex.api.service.AuthService;
 import io.jsonwebtoken.Jwts;
@@ -69,5 +70,10 @@ public class AuthController {
                 .compact();
 
         return new SessionResponse(jws);
+    }
+
+    @PostMapping("/auth/signup")
+    public void signup(@RequestBody Signup signup){
+        authService.signup(signup);
     }
 }
