@@ -59,7 +59,6 @@ public class AuthController {
     public SessionResponse login(@RequestBody Login login){
         Long userId = authService.signIn(login);
 
-
         SecretKey key = Keys.hmacShaKeyFor(appConfig.getJwtKey());
 
         String jws = Jwts.builder()
@@ -74,6 +73,7 @@ public class AuthController {
 
     @PostMapping("/auth/signup")
     public void signup(@RequestBody Signup signup){
+
         authService.signup(signup);
     }
 }
